@@ -70,9 +70,11 @@ Snake.constructor = function()
                
                 for index, element in ipairs(Snake.element) do
                     local snakeX, snakeY = Snake.findNearGrid(element.Position.x, element.Position.y)
-                    dxDrawRectangle(snakeX[1], snakeY[1], Snake.gridPadding, Snake.gridPadding, tocolor(0, 255, 0))
-                    if element.head then
-                        dxDrawRectangle(snakeX[1]+2, snakeY[1]+2, Snake.gridPadding/2, Snake.gridPadding/2, tocolor(0, 0, 0))
+                    if snakeX and snakeY then
+                        dxDrawRectangle(snakeX[1], snakeY[1], Snake.gridPadding, Snake.gridPadding, tocolor(0, 255, 0))
+                        if element.head then
+                            dxDrawRectangle(snakeX[1]+2, snakeY[1]+2, Snake.gridPadding/2, Snake.gridPadding/2, tocolor(0, 0, 0))
+                        end
                     end
                 end
                 
@@ -112,7 +114,7 @@ end
 
 Snake.move = function(key)
     if key == "left" then
-        Snake.activity[#Snake.element + 1] = Vector2((Snake.head().Position.x - Snake.gridPadding <= 0) and 500 or Snake.head().Position.x - Snake.gridPadding, Snake.head().Position.y)
+        Snake.activity[#Snake.element + 1] = Vector2((Snake.head().Position.x - Snake.gridPadding < 0) and 500 or Snake.head().Position.x - Snake.gridPadding, Snake.head().Position.y)
        
         for index, element in ipairs(Snake.element) do
             Snake.activity[index] = Snake.activity[index + 1]
@@ -125,13 +127,13 @@ Snake.move = function(key)
             element.Position = Snake.activity[index]
         end
     elseif key == "down" then
-        Snake.activity[#Snake.element + 1] = Vector2(Snake.head().Position.x, Snake.head().Position.y + Snake.gridPadding)
+        Snake.activity[#Snake.element + 1] = Vector2(Snake.head().Position.x, (Snake.head().Position.y + Snake.gridPadding >= 500) and 0 or Snake.head().Position.y + Snake.gridPadding)
         for index, element in ipairs(Snake.element) do
             Snake.activity[index] = Snake.activity[index + 1]
             element.Position = Snake.activity[index]
         end
     elseif key == "up" then
-        Snake.activity[#Snake.element + 1] = Vector2(Snake.head().Position.x, Snake.head().Position.y - Snake.gridPadding)
+        Snake.activity[#Snake.element + 1] = Vector2(Snake.head().Position.x, (Snake.head().Position.y - Snake.gridPadding < 0) and 500 or Snake.head().Position.y - Snake.gridPadding)
         for index, element in ipairs(Snake.element) do
             Snake.activity[index] = Snake.activity[index + 1]
             element.Position = Snake.activity[index]
