@@ -79,7 +79,7 @@ Snake.constructor = function()
                 dxSetBlendMode("blend")
                 dxSetRenderTarget()
             end
-            if getKeyState("arrow_r") and Snake.lastClick+150 <= getTickCount() then
+            if getKeyState("arrow_r") and Snake.lastClick+100 <= getTickCount() then
                 Snake.lastClick = getTickCount()
                 Snake.move("right")
             end
@@ -90,6 +90,10 @@ Snake.constructor = function()
             if getKeyState("arrow_d") and Snake.lastClick+100 <= getTickCount() then
                 Snake.lastClick = getTickCount()
                 Snake.move("down")
+            end
+            if getKeyState("arrow_u") and Snake.lastClick+100 <= getTickCount() then
+                Snake.lastClick = getTickCount()
+                Snake.move("up")
             end
             dxDrawImage(Snake.position.x, Snake.position.y, Snake.size.x, Snake.size.y, Snake.renderTarget)
 
@@ -114,7 +118,11 @@ end
 
 Snake.move = function(key)
     if key == "left" then
-        
+        Snake.activity[#Snake.element + 1] = Vector2(Snake.head().Position.x - Snake.gridPadding, Snake.head().Position.y)
+        for index, element in ipairs(Snake.element) do
+            Snake.activity[index] = Snake.activity[index + 1]
+            element.Position = Snake.activity[index]
+        end
     elseif key == "right" then
         Snake.activity[#Snake.element + 1] = Vector2(Snake.head().Position.x + Snake.gridPadding, Snake.head().Position.y)
         for index, element in ipairs(Snake.element) do
@@ -122,9 +130,17 @@ Snake.move = function(key)
             element.Position = Snake.activity[index]
         end
     elseif key == "down" then
-
+        Snake.activity[#Snake.element + 1] = Vector2(Snake.head().Position.x, Snake.head().Position.y + Snake.gridPadding)
+        for index, element in ipairs(Snake.element) do
+            Snake.activity[index] = Snake.activity[index + 1]
+            element.Position = Snake.activity[index]
+        end
     elseif key == "up" then
-        
+        Snake.activity[#Snake.element + 1] = Vector2(Snake.head().Position.x, Snake.head().Position.y - Snake.gridPadding)
+        for index, element in ipairs(Snake.element) do
+            Snake.activity[index] = Snake.activity[index + 1]
+            element.Position = Snake.activity[index]
+        end
     end
 end
 
