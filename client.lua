@@ -3,8 +3,9 @@ local screenX, screenY = guiGetScreenSize()
 Snake = Service:new("snake-game")
 
 Snake.constructor = function()
-    Snake.size = Vector2(500, 500)
-    Snake.position = Vector2(screenX/2-500/2, screenY/2-500/2)
+    local width, height = 500, 500
+    Snake.size = Vector2(width, height)
+    Snake.position = Vector2(screenX/2-width/2, screenY/2-height/2)
 
     if isElement(Snake.renderTarget) then
         Snake.renderTarget:destroy()
@@ -45,7 +46,7 @@ Snake.constructor = function()
 
                 dxSetRenderTarget(Snake.renderTarget, true)
 
-                dxDrawRectangle(0, 0, Snake.size.x, Snake.size.y, tocolor(25, 25, 25, 230))
+                dxDrawRectangle(0, 0, Snake.size.x, Snake.size.y, tocolor(25, 25, 25, 240))
     
                 
                 for _, dataX in pairs(Snake.lines.x) do
@@ -55,14 +56,14 @@ Snake.constructor = function()
                         local endX = dataX[2]
                         local endY = dataY[1]
 
-                        dxDrawLine(startX, startY, endX, endY, tocolor(255,255,255,100), 1)
+                        dxDrawLine(startX, startY, endX, endY, tocolor(35, 35, 35, 170), 1)
 
                         local startX = dataX[1]
                         local startY = dataY[1]
                         local endX = dataX[1]
                         local endY = dataY[2]
 
-                        dxDrawLine(startX, startY, endX, endY, tocolor(255,255,255,100), 1)
+                        dxDrawLine(startX, startY, endX, endY, tocolor(35, 35, 35, 170), 1)
                     end
                 end
 
@@ -96,13 +97,6 @@ Snake.constructor = function()
                 Snake.move("up")
             end
             dxDrawImage(Snake.position.x, Snake.position.y, Snake.size.x, Snake.size.y, Snake.renderTarget)
-
-            --#Debug:
-            local debugText = ""
-            for index, row in ipairs(Snake.activity) do
-                debugText = debugText..index..": X-"..row.x..", Y-"..row.y.."\n"
-            end
-            dxDrawText(debugText, 25, screenY/2-25/2, 25, 25, tocolor(255, 255, 255, 255/2), 1, "default", "left", "top")
         end,
     0, 0)
 end
@@ -118,13 +112,14 @@ end
 
 Snake.move = function(key)
     if key == "left" then
-        Snake.activity[#Snake.element + 1] = Vector2(Snake.head().Position.x - Snake.gridPadding, Snake.head().Position.y)
+        Snake.activity[#Snake.element + 1] = Vector2((Snake.head().Position.x - Snake.gridPadding <= 0) and 500 or Snake.head().Position.x - Snake.gridPadding, Snake.head().Position.y)
+       
         for index, element in ipairs(Snake.element) do
             Snake.activity[index] = Snake.activity[index + 1]
             element.Position = Snake.activity[index]
         end
     elseif key == "right" then
-        Snake.activity[#Snake.element + 1] = Vector2(Snake.head().Position.x + Snake.gridPadding, Snake.head().Position.y)
+        Snake.activity[#Snake.element + 1] = Vector2((Snake.head().Position.x - Snake.gridPadding >= 500) and 0 or Snake.head().Position.x + Snake.gridPadding, Snake.head().Position.y)
         for index, element in ipairs(Snake.element) do
             Snake.activity[index] = Snake.activity[index + 1]
             element.Position = Snake.activity[index]
