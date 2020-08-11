@@ -73,7 +73,6 @@ Snake.constructor = function()
                     if element.head then
                         dxDrawRectangle(snakeX[1]+2, snakeY[1]+2, Snake.gridPadding/2, Snake.gridPadding/2, tocolor(0, 0, 0))
                     end
-                    dxDrawText(snakeX[1].." - "..snakeY[1], snakeX[1], snakeY[1], Snake.gridPadding+snakeX[1], Snake.gridPadding+snakeY[1], tocolor(0, 0, 0), 1, "default", "center", "center")
                 end
                 
 
@@ -93,6 +92,13 @@ Snake.constructor = function()
                 Snake.move("down")
             end
             dxDrawImage(Snake.position.x, Snake.position.y, Snake.size.x, Snake.size.y, Snake.renderTarget)
+
+            --#Debug:
+            local debugText = ""
+            for index, row in ipairs(Snake.activity) do
+                debugText = debugText..index..": X-"..row.x..", Y-"..row.y.."\n"
+            end
+            dxDrawText(debugText, 25, screenY/2-25/2, 25, 25, tocolor(255, 255, 255, 255/2), 1, "default", "left", "top")
         end,
     0, 0)
 end
@@ -110,19 +116,21 @@ Snake.move = function(key)
     if key == "left" then
         
     elseif key == "right" then
-        
         for index, element in ipairs(Snake.element) do
-            if not element.head then
+            if not element.head and index ~= #Snake.element - 1 then
                 Snake.activity[index] = Snake.activity[index + 1]
-                element.Position = Snake.activity[index]
+                element.Position = Vector2(Snake.activity[index].x, Snake.activity[index].y)
             end
         end
-        Snake.head().Position.x = Snake.head().Position.x + Snake.gridPadding
-        Snake.activity[#Snake.element] = Snake.head().Position
-        
+        local oldPosition = Snake.head().Position
+        Snake.activity[#Snake.element - 1] = Snake.head().Position
 
+        Snake.head().Position.x = Snake.head().Position.x + Snake.gridPadding
+
+        Snake.element[#Snake.element - 1].Position = Snake.activity[#Snake.element - 1]
+        Snake.activity[#Snake.element] = Snake.head().Position
     elseif key == "down" then
-        
+
     elseif key == "up" then
         
     end
