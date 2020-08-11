@@ -79,7 +79,7 @@ Snake.constructor = function()
                 dxSetBlendMode("blend")
                 dxSetRenderTarget()
             end
-            if getKeyState("arrow_r") and Snake.lastClick+100 <= getTickCount() then
+            if getKeyState("arrow_r") and Snake.lastClick+150 <= getTickCount() then
                 Snake.lastClick = getTickCount()
                 Snake.move("right")
             end
@@ -116,19 +116,11 @@ Snake.move = function(key)
     if key == "left" then
         
     elseif key == "right" then
+        Snake.activity[#Snake.element + 1] = Vector2(Snake.head().Position.x + Snake.gridPadding, Snake.head().Position.y)
         for index, element in ipairs(Snake.element) do
-            if not element.head and index ~= #Snake.element - 1 then
-                Snake.activity[index] = Snake.activity[index + 1]
-                element.Position = Vector2(Snake.activity[index].x, Snake.activity[index].y)
-            end
+            Snake.activity[index] = Snake.activity[index + 1]
+            element.Position = Snake.activity[index]
         end
-        local oldPosition = Snake.head().Position
-        Snake.activity[#Snake.element - 1] = Snake.head().Position
-
-        Snake.head().Position.x = Snake.head().Position.x + Snake.gridPadding
-
-        Snake.element[#Snake.element - 1].Position = Snake.activity[#Snake.element - 1]
-        Snake.activity[#Snake.element] = Snake.head().Position
     elseif key == "down" then
 
     elseif key == "up" then
