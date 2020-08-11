@@ -28,11 +28,13 @@ Snake.constructor = function()
         x = {},
         y = {}
     }
+    Snake.activity = {}
 
     Snake.gridLimit = 50
     Snake.gridPadding = 10
     Snake.lastClick = getTickCount()
     Snake.calculateGrids()
+    showCursor(true)
     Snake.render = Timer(
         function()
             if Snake.tick+Snake.refreshTick <= getTickCount() then
@@ -68,6 +70,7 @@ Snake.constructor = function()
                     if element.head then
                         dxDrawRectangle(snakeX[1]+2, snakeY[1]+2, Snake.gridPadding/2, Snake.gridPadding/2, tocolor(0, 0, 0))
                     end
+                    dxDrawText(snakeX[1].." - "..snakeY[1], snakeX[1], snakeY[1], Snake.gridPadding+snakeX[1], Snake.gridPadding+snakeY[1], tocolor(0, 0, 0), 1, "default", "center", "center")
                 end
                 
 
@@ -76,49 +79,56 @@ Snake.constructor = function()
             end
             if getKeyState("arrow_r") and Snake.lastClick+100 <= getTickCount() then
                 Snake.lastClick = getTickCount()
-                if Snake.element[1].head then
-
-                end
-                for index, element in ipairs(Snake.element) do
-                    element.Position.x = element.Position.x + Snake.gridPadding
-                    if element.Position.x >= 500 then
-                        element.Position.x = 0
-                    end
-                end
+                Snake.move("right")
             end
             if getKeyState("arrow_l") and Snake.lastClick+100 <= getTickCount() then
                 Snake.lastClick = getTickCount()
-                if Snake.element[#Snake.element].head then
-                    outputChatBox("game over.")
-                end
-                for index, element in ipairs(Snake.element) do
-                    element.Position.x = element.Position.x + Snake.gridPadding
-                end
+                Snake.move("left")
             end
-            --[[
-            if getKeyState("arrow_l") and Snake.lastClick+100 <= getTickCount() then
-                Snake.lastClick = getTickCount()
-                Snake.element[#Snake.element].Position.x = Snake.element[#Snake.element].Position.x - Snake.gridPadding
-            end
-
-            if getKeyState("arrow_r") and Snake.lastClick+100 <= getTickCount() then
-                Snake.lastClick = getTickCount()
-                Snake.element.Position.x = Snake.element.Position.x + Snake.gridPadding
-            end
-
-            if getKeyState("arrow_u") and Snake.lastClick+100 <= getTickCount() then
-                Snake.lastClick = getTickCount()
-                Snake.element.Position.y = Snake.element.Position.y - Snake.gridPadding
-            end
-            
             if getKeyState("arrow_d") and Snake.lastClick+100 <= getTickCount() then
                 Snake.lastClick = getTickCount()
-                Snake.element.Position.y = Snake.element.Position.y + Snake.gridPadding
+                Snake.move("down")
             end
-            ]]--
             dxDrawImage(Snake.position.x, Snake.position.y, Snake.size.x, Snake.size.y, Snake.renderTarget)
         end,
     0, 0)
+end
+
+Snake.head = function()
+    for index, element in ipairs(Snake.element) do
+        if element.head then
+            
+            return Snake.element[index]
+        end
+    end
+    return false
+end
+
+Snake.move = function(key)
+    if key == "left" then
+        for index, element in ipairs(Snake.element) do
+            if not element.head then
+                Snake.activity[index - 1] = element.Position
+            end
+        end
+        Snake.activity[#Snake.element - 1] = Snake.head().Position
+        Snake.head().Position.x = Snake.head().Position.x - Snake.gridPadding
+        for index, element in ipairs(Snake.element) do
+            if Snake.activity[index] and not element.head then
+                element.Position = Snake.activity[index]
+            end
+        end
+        
+    elseif key == "right" then
+        Snake.activity.head = Snake.head().Position
+        Snake.head().Position.x = Snake.head().Position.x + Snake.gridPadding
+    
+    elseif key == "down" then
+        Snake.head().Position.y = Snake.head().Position.y + Snake.gridPadding
+        
+    elseif key == "up" then
+        
+    end
 end
 
 Snake.calculateGrids = function()
