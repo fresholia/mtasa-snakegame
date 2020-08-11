@@ -29,6 +29,9 @@ Snake.constructor = function()
         y = {}
     }
     Snake.activity = {}
+    for index, element in ipairs(Snake.element) do
+        Snake.activity[index] = element.Position
+    end
 
     Snake.gridLimit = 50
     Snake.gridPadding = 10
@@ -97,7 +100,6 @@ end
 Snake.head = function()
     for index, element in ipairs(Snake.element) do
         if element.head then
-            
             return Snake.element[index]
         end
     end
@@ -106,23 +108,21 @@ end
 
 Snake.move = function(key)
     if key == "left" then
+     
+        Snake.head().Position.x = Snake.head().Position.x - Snake.gridPadding
+   
+    elseif key == "right" then
+        
         for index, element in ipairs(Snake.element) do
             if not element.head then
-                Snake.activity[index - 1] = element.Position
-            end
-        end
-        Snake.activity[#Snake.element - 1] = Snake.head().Position
-        Snake.head().Position.x = Snake.head().Position.x - Snake.gridPadding
-        for index, element in ipairs(Snake.element) do
-            if Snake.activity[index] and not element.head then
+                Snake.activity[index] = Snake.activity[index + 1]
                 element.Position = Snake.activity[index]
             end
         end
-        
-    elseif key == "right" then
-        Snake.activity.head = Snake.head().Position
         Snake.head().Position.x = Snake.head().Position.x + Snake.gridPadding
-    
+        Snake.activity[#Snake.element] = Snake.head().Position
+        
+
     elseif key == "down" then
         Snake.head().Position.y = Snake.head().Position.y + Snake.gridPadding
         
