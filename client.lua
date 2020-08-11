@@ -108,9 +108,7 @@ end
 
 Snake.move = function(key)
     if key == "left" then
-     
-        Snake.head().Position.x = Snake.head().Position.x - Snake.gridPadding
-   
+        
     elseif key == "right" then
         
         for index, element in ipairs(Snake.element) do
@@ -124,7 +122,6 @@ Snake.move = function(key)
         
 
     elseif key == "down" then
-        Snake.head().Position.y = Snake.head().Position.y + Snake.gridPadding
         
     elseif key == "up" then
         
